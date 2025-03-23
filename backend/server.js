@@ -1,66 +1,45 @@
-const http = require("http");
-const url = require("url");
-const client = require("./db");
+require("dotenv").config();
+const express = require("express");
+const cors = require("cors");
+const db = require("./db"); // ✅ Import the shared database pool
 
-const server = http.createServer(async (req, res) => {
-  const parsedUrl = url.parse(req.url, true);
+const app = express();
+const PORT = 3000;
 
-  console.log(`📢 Received request: ${req.method} ${parsedUrl.pathname}`);
+// ✅ Enable CORS for frontend (fixes CORS issues)
+app.use(cors({ origin: "*" }));
 
-  // 📌 GET: Retrieve all users
-  if (parsedUrl.pathname === "/users" && req.method === "GET") {
-    try {
-      const result = await client.query("SELECT * FROM users");
-      res.writeHead(200, { "Content-Type": "application/json" });
-      res.end(JSON.stringify(result.rows));
-    } catch (err) {
-      res.writeHead(500, { "Content-Type": "application/json" });
-      res.end(
-        JSON.stringify({ error: "Database query failed", details: err.message })
-      );
-    }
-  }
+// ✅ Middleware to parse JSON requests
+app.use(express.json());
 
-// 📌 POST: Add a new user
-else if (parsedUrl.pathname === "/users" && req.method === "POST") {
-  let body = "";
-  req.on("data", (chunk) => {
-    body += chunk;
-  });
-  req.on("end", async () => {
-    console.log("📡 Received data:", body);
-    try {
-      const { name, email } = JSON.parse(body);
-      const result = await client.query(
-        "INSERT INTO public.users (name, email) VALUES ($1, $2) RETURNING *", // ✅ Corrected SQL
-        [name, email]
-      );
-      res.writeHead(201, { "Content-Type": "application/json" });
-      res.end(JSON.stringify(result.rows[0]));
-    } catch (err) {
-      console.error("❌ Failed to insert user:", err);
-      res.writeHead(500, { "Content-Type": "application/json" });
-      res.end(
-        JSON.stringify({
-          error: "Failed to insert user",
-          details: err.message,
-        })
-      );
-    }
-  });
-}
-
-  
-  
-
-  // 📌 404: Not Found
-  else {
-    res.writeHead(404, { "Content-Type": "application/json" });
-    res.end(JSON.stringify({ message: "Not Found" }));
+// ✅ GET: Fetch all users
+app.get("/users", async (req, res) => {
+  try {
+    const result = await db.query("SELECT * FROM public.users");
+    res.json(result.rows);
+  } catch (err) {
+    res
+      .status(500)
+      .json({ error: "Database query failed", details: err.message });
   }
 });
 
-const PORT = 3000;
-server.listen(PORT, () => {
-  console.log(`✅ Server running at http://localhost:${PORT}`);
+// ✅ POST: Add a new user
+app.post("/users", async (req, res) => {
+  try {
+    const { name, email } = req.body;
+    const query =
+      "INSERT INTO public.users (name, email) VALUES ($1, $2) RETURNING *";
+    const result = await db.query(query, [name, email]);
+    res.status(201).json(result.rows[0]);
+  } catch (err) {
+    res
+      .status(500)
+      .json({ error: "Failed to insert user", details: err.message });
+  }
+});
+
+// ✅ Start the server
+app.listen(PORT, () => {
+  console.log(`✅ Server is running at http://localhost:${PORT}`);
 });

@@ -1,3 +1,4 @@
+-- sql-lint disable
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
@@ -6,7 +7,7 @@ CREATE TABLE users (
 
 INSERT INTO users (name, email) VALUES
 ('Kyss Centaur Fuentes', 'kyss.fuentes2@gmail.com'),
-('John Karl Garcia', 'johnkarl2@gmail.com');
+('John Karl Garcia', 'helcurtz71@gmail.com');
 
 SELECT * FROM users;
 DROP TABLE users;
@@ -19,10 +20,10 @@ SELECT table_name FROM information_schema.tables WHERE table_schema = 'public';
 
 SELECT schemaname, tablename FROM pg_tables WHERE tablename = 'users';
 
-GRANT ALL PRIVILEGES ON DATABASE IT_110_FINAL_PROJECT TO kyss_superadmin;
+GRANT ALL PRIVILEGES ON DATABASE IT_110_FINAL_PROJECT TO kyss_superadmin; 
 
-GRANT ALL PRIVILEGES ON TABLE users TO kyss_superadmin;
+GRANT ALL PRIVILEGES ON TABLE public."users" TO kyss_superadmin;
 
-DROP DATABASE "IT 110 Final Project";  
+GRANT USAGE, SELECT, UPDATE ON SEQUENCE public."users_id_seq" TO kyss_superadmin;
 
-\c postgres;
+DROP DATABASE "IT 110 Final Project";

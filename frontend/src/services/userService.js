@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:3000/users"; // Your backend API URL
+const API_URL = "http://localhost:3000/users"; // ✅ Ensure this is correct
 
 export async function getUsers() {
   try {

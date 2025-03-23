@@ -6,12 +6,13 @@ const users = ref([])
 
 onMounted(async () => {
   users.value = await getUsers()
+  console.log('Fetched users:', users.value) // ✅ Debugging
 })
 </script>
 
 <template>
   <div>
-    <h1>User List</h1>
+    <h2>User List</h2>
     <ul>
       <li v-for="user in users" :key="user.id">{{ user.name }} - {{ user.email }}</li>
     </ul>
