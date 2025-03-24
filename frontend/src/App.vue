@@ -1,85 +1,99 @@
 <script setup>
-import { RouterLink, RouterView } from 'vue-router'
-import HelloWorld from './components/HelloWorld.vue'
+import { ref } from 'vue'
+import { RouterView } from 'vue-router'
+
+const drawer = ref(false) // ✅ Controls sidebar
 </script>
 
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
+  <v-app>
+    <!-- ✅ Sidebar Navigation -->
+    <v-navigation-drawer v-model="drawer" app>
+      <v-list>
+        <v-list-item title="Navigation" subtitle="Quick Links"></v-list-item>
+        <v-divider></v-divider>
+        <v-list-item link to="/home"> <v-icon left>mdi-home</v-icon> Home </v-list-item>
+        <v-list-item link to="/about"> <v-icon left>mdi-information</v-icon> About </v-list-item>
+        <v-list-item link to="/admin/login">
+          <v-icon left>mdi-account-lock</v-icon> Admin Login
+        </v-list-item>
+      </v-list>
+    </v-navigation-drawer>
 
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
+    <!-- ✅ Responsive Navbar -->
+    <v-app-bar color="primary" dark>
+      <v-container>
+        <v-row align="center">
+          <v-col cols="6">
+            <v-toolbar-title class="font-weight-bold">IT 110 Final Project</v-toolbar-title>
+          </v-col>
+          <v-col cols="6" class="text-right">
+            <v-btn icon @click="drawer = !drawer">
+              <v-icon>mdi-menu</v-icon>
+            </v-btn>
+            <v-btn :to="'/home'" text class="mx-1">Home</v-btn>
+            <v-btn :to="'/about'" text class="mx-1">About</v-btn>
+            <v-btn :to="'/admin/login'" color="secondary" dark class="mx-1">Admin Login</v-btn>
+          </v-col>
+        </v-row>
+      </v-container>
+    </v-app-bar>
 
-      <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
-      </nav>
-    </div>
-  </header>
+    <!-- ✅ Main Content -->
+    <v-main>
+      <v-container>
+        <RouterView />
+      </v-container>
+    </v-main>
 
-  <RouterView />
+    <!-- ✅ Footer -->
+    <v-footer app color="primary" dark class="d-flex justify-center">
+      <span>© 2025 IT 110 Final Project. All rights reserved.</span>
+    </v-footer>
+  </v-app>
 </template>
 
 <style scoped>
-header {
-  line-height: 1.5;
-  max-height: 100vh;
+/* ✅ Keep Your Preferred Styling */
+.v-application {
+  font-family: 'Roboto', sans-serif;
+  background-color: #f5f5f5;
 }
 
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
+/* ✅ Navbar styles */
+.v-app-bar {
+  padding: 10px 0;
 }
 
-nav {
-  width: 100%;
-  font-size: 12px;
+/* ✅ Button Styling with Hover Effects */
+.v-btn {
+  font-size: 1rem;
+  text-transform: none;
+  transition: background 0.3s ease-in-out;
+}
+
+.v-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* ✅ Sidebar Styles */
+.v-navigation-drawer {
+  background-color: #222;
+  color: white;
+}
+
+.v-list-item {
+  transition: background 0.3s ease-in-out;
+}
+
+.v-list-item:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* ✅ Footer Styling */
+.v-footer {
+  padding: 10px 0;
+  font-size: 14px;
   text-align: center;
-  margin-top: 2rem;
-}
-
-nav a.router-link-exact-active {
-  color: var(--color-text);
-}
-
-nav a.router-link-exact-active:hover {
-  background-color: transparent;
-}
-
-nav a {
-  display: inline-block;
-  padding: 0 1rem;
-  border-left: 1px solid var(--color-border);
-}
-
-nav a:first-of-type {
-  border: 0;
-}
-
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-
-  nav {
-    text-align: left;
-    margin-left: -1rem;
-    font-size: 1rem;
-
-    padding: 1rem 0;
-    margin-top: 1rem;
-  }
 }
 </style>

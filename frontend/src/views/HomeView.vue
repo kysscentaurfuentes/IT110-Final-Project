@@ -18,3 +18,27 @@ onMounted(async () => {
     </ul>
   </div>
 </template>
+
+<style scoped>
+.v-card {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+}
+
+li {
+  padding: 8px;
+  background: #f4f4f4;
+  margin-bottom: 5px;
+  border-radius: 5px;
+  text-align: center;
+}
+</style>
