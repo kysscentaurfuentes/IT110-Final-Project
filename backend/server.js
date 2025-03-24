@@ -3,6 +3,7 @@ const express = require("express");
 const cors = require("cors");
 const db = require("./db"); // ✅ Import the shared database pool
 const authRoutes = require("./auth"); // ✅ Import authentication routes
+const { verifyToken, isAdmin } = require("./middlewares/authMiddleware"); // ✅ Import middleware
 
 const app = express();
 const PORT = 3000;
@@ -18,14 +19,12 @@ console.log("✅ Registering /auth routes...");
 app.use("/auth", authRoutes);
 
 // ✅ GET: Fetch all users
-app.get("/users", async (req, res) => {
+app.get("/users", verifyToken, isAdmin, async (req, res) => {
   try {
-    const result = await db.query("SELECT * FROM public.users");
+    const result = await db.query("SELECT id, name, email, role, username FROM users"); // ❌ Removed 'password'
     res.json(result.rows);
   } catch (err) {
-    res
-      .status(500)
-      .json({ error: "Database query failed", details: err.message });
+    res.status(500).json({ error: "Database query failed", details: err.message });
   }
 });
 
