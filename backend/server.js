@@ -2,6 +2,7 @@ require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const db = require("./db"); // ✅ Import the shared database pool
+const authRoutes = require("./auth"); // ✅ Import authentication routes
 
 const app = express();
 const PORT = 3000;
@@ -11,6 +12,10 @@ app.use(cors({ origin: "*" }));
 
 // ✅ Middleware to parse JSON requests
 app.use(express.json());
+
+console.log("✅ Registering /auth routes...");
+// ✅ Authentication Routes
+app.use("/auth", authRoutes);
 
 // ✅ GET: Fetch all users
 app.get("/users", async (req, res) => {
