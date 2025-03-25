@@ -1,54 +1,41 @@
 <script setup>
 import { ref, onMounted } from 'vue'
-import axios from 'axios'
+import { getUsers, updateUserRole, deleteUser } from '@/services/userService'
 import { useToast } from 'vue-toastification' // ✅ For notifications
 
 const users = ref([])
-const toast = useToast() // ✅ Initialize notifications
+const toast = useToast()
 
 const fetchUsers = async () => {
   try {
-    const token = localStorage.getItem('token')
-    const response = await axios.get('http://localhost:3000/users', {
-      headers: { Authorization: `Bearer ${token}` },
-    })
-    users.value = response.data
+    users.value = await getUsers()
+    console.log('✅ Fetched users:', users.value)
   } catch (error) {
     console.error('❌ Error fetching users:', error)
   }
 }
 
-const updateRole = async (userId, newRole) => {
+const updateRole = async (user, newRole) => {
+  if (user.role === newRole) return // ✅ Skip if no changes
   try {
-    const token = localStorage.getItem('token')
-    await axios.put(
-      `http://localhost:3000/users/${userId}`,
-      { role: newRole },
-      {
-        headers: { Authorization: `Bearer ${token}` },
-      },
-    )
-    toast.success('User role updated!') // ✅ Show success message
-    fetchUsers() // Refresh users list
+    await updateUserRole(user.id, newRole)
+    user.role = newRole // ✅ Update local state
+    toast.success('User role updated!')
   } catch (error) {
     console.error('❌ Error updating role:', error)
-    toast.error('Failed to update role') // ✅ Show error message
+    toast.error('Failed to update role')
   }
 }
 
-const deleteUser = async (userId) => {
+const deleteUserAccount = async (userId) => {
   if (!confirm('Are you sure you want to delete this user?')) return
-
   try {
-    const token = localStorage.getItem('token')
-    await axios.delete(`http://localhost:3000/users/${userId}`, {
-      headers: { Authorization: `Bearer ${token}` },
-    })
-    toast.success('User deleted successfully!') // ✅ Show success message
-    fetchUsers() // Refresh users list
+    await deleteUser(userId)
+    users.value = users.value.filter(user => user.id !== userId) // ✅ Remove from list
+    toast.success('User deleted successfully!')
   } catch (error) {
     console.error('❌ Error deleting user:', error)
-    toast.error('Failed to delete user') // ✅ Show error message
+    toast.error('Failed to delete user')
   }
 }
 
@@ -77,13 +64,13 @@ onMounted(fetchUsers)
               <td>{{ user.email }}</td>
               <td>
                 <v-select
-                  v-model="user.role"
+                  v-model="user.selectedRole"
                   :items="['superadmin', 'employee', 'customer']"
-                  @change="updateRole(user.id, user.role)"
+                  @change="updateRole(user, user.selectedRole)"
                 ></v-select>
               </td>
               <td>
-                <v-btn color="red" @click="deleteUser(user.id)">Delete</v-btn>
+                <v-btn color="red" @click="deleteUserAccount(user.id)">Delete</v-btn>
               </td>
             </tr>
           </tbody>

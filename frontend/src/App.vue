@@ -1,13 +1,23 @@
 <script setup>
 import { ref } from 'vue'
 import { RouterView } from 'vue-router'
+import { useTheme } from 'vuetify'
 
-const drawer = ref(false) // ✅ Controls sidebar
+const drawer = ref(true) // ✅ Sidebar is Open by Default
+const theme = useTheme()
+const isDarkMode = ref(false)
+
+// ✅ Toggle Dark Mode
+const toggleDarkMode = () => {
+  isDarkMode.value = !isDarkMode.value
+  theme.global.name.value = isDarkMode.value ? 'dark' : 'light'
+  console.log('Dark Mode:', isDarkMode.value) // ✅ Debugging Output
+}
 </script>
 
 <template>
   <v-app>
-    <!-- ✅ Sidebar Navigation -->
+    <!-- ✅ Sidebar Navigation (Fixed) -->
     <v-navigation-drawer v-model="drawer" app>
       <v-list>
         <v-list-item title="Navigation" subtitle="Quick Links"></v-list-item>
@@ -34,6 +44,12 @@ const drawer = ref(false) // ✅ Controls sidebar
             <v-btn :to="'/home'" text class="mx-1">Home</v-btn>
             <v-btn :to="'/about'" text class="mx-1">About</v-btn>
             <v-btn :to="'/admin/login'" color="secondary" dark class="mx-1">Admin Login</v-btn>
+
+            <!-- 🌙 Dark Mode Toggle (Fixed) -->
+            <v-btn icon @click="toggleDarkMode" color="white">
+              <v-icon>{{ isDarkMode ? 'mdi-weather-sunny' : 'mdi-weather-night' }}</v-icon>
+              <span>Dark Mode</span>
+            </v-btn>
           </v-col>
         </v-row>
       </v-container>
@@ -54,10 +70,10 @@ const drawer = ref(false) // ✅ Controls sidebar
 </template>
 
 <style scoped>
-/* ✅ Keep Your Preferred Styling */
+/* ✅ Dark Mode Background */
 .v-application {
   font-family: 'Roboto', sans-serif;
-  background-color: #f5f5f5;
+  transition: background-color 0.3s ease-in-out;
 }
 
 /* ✅ Navbar styles */
@@ -76,7 +92,7 @@ const drawer = ref(false) // ✅ Controls sidebar
   background: rgba(255, 255, 255, 0.2);
 }
 
-/* ✅ Sidebar Styles */
+/* ✅ Sidebar Styles (Fixed) */
 .v-navigation-drawer {
   background-color: #222;
   color: white;

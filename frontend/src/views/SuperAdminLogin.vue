@@ -14,12 +14,14 @@ const login = async () => {
     const response = await axios.post('http://localhost:3000/auth/login', {
       username: username.value,
       password: password.value,
-    })
+    }, { withCredentials: true }) // ✅ Allow cookies for refresh token
 
-    const token = response.data.token
-    localStorage.setItem('token', token) // ✅ Store JWT Token
+    const token = response.data.accessToken // ✅ Get Correct Token
+    localStorage.setItem('accessToken', token) // ✅ Store JWT Token
+    localStorage.setItem('userRole', 'superadmin') // ✅ Save Role
     router.push('/admin/dashboard') // ✅ Redirect after login
   } catch (error) {
+    console.error('🔴 Login failed:', error.response?.data || error.message)
     errorMessage.value = '❌ Invalid username or password'
   }
 }
