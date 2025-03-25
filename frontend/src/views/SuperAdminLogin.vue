@@ -11,10 +11,14 @@ const errorMessage = ref('')
 // 🔒 Login Function (Now Uses API)
 const login = async () => {
   try {
-    const response = await axios.post('http://localhost:3000/auth/login', {
-      username: username.value,
-      password: password.value,
-    }, { withCredentials: true }) // ✅ Allow cookies for refresh token
+    const response = await axios.post(
+      'http://localhost:3000/auth/login',
+      {
+        username: username.value,
+        password: password.value,
+      },
+      { withCredentials: true },
+    ) // ✅ Allow cookies for refresh token
 
     const token = response.data.accessToken // ✅ Get Correct Token
     localStorage.setItem('accessToken', token) // ✅ Store JWT Token

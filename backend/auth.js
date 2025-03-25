@@ -9,8 +9,9 @@ const cookieParser = require("cookie-parser"); // ✅ Add this middleware
 const router = express.Router();
 router.use(cookieParser()); // ✅ Enable cookie parsing
 
-const JWT_SECRET = process.env.JWT_SECRET || "supersecretkey"; // 🔐 JWT Secret Key
-const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET || "refreshsecretkey"; // 🔐 Refresh Token Secret Key
+// 🔐 [SECURITY] JWT Secret Key & Refresh Token Secret Key → ✅ Secure authentication
+const JWT_SECRET = process.env.JWT_SECRET; //  Secure JWT Secret Key
+const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET; //  Secure Refresh Token Secret Key
 
 // ✅ TEST ROUTE to check if auth.js is working
 router.get("/test", (req, res) => {
@@ -32,7 +33,7 @@ const generateTokens = (user) => {
   return { accessToken, refreshToken };
 };
 
-// ✅ REGISTER (Hash Passwords + Save to DB)
+// 🔐 [SECURITY] Hash Password Before Storing in DB → 🔑 Protects passwords from leaks
 router.post("/register", async (req, res) => {
   const { username, password, role } = req.body;
   try {
@@ -55,18 +56,30 @@ router.post("/login", async (req, res) => {
   console.log("🔍 Login Attempt:", username);
 
   try {
-    const result = await db.query("SELECT * FROM users WHERE username = $1", [username]);
+    const result = await db.query("SELECT * FROM users WHERE username = $1", [
+      username,
+    ]);
 
-    if (result.rows.length === 0) return res.status(401).json({ error: "Invalid credentials" });
+    if (result.rows.length === 0)
+      return res.status(401).json({ error: "Invalid credentials" });
 
     const user = result.rows[0];
     const passwordMatch = await bcrypt.compare(password, user.password);
 
-    if (!passwordMatch) return res.status(401).json({ error: "Invalid credentials" });
+    if (!passwordMatch)
+      return res.status(401).json({ error: "Invalid credentials" });
 
-    // 🔥 Generate Tokens
-    const accessToken = jwt.sign({ userId: user.id, role: user.role }, JWT_SECRET, { expiresIn: "1h" });
-    const refreshToken = jwt.sign({ userId: user.id, role: user.role }, JWT_REFRESH_SECRET, { expiresIn: "7d" });
+    // 🔐 [SECURITY] Generate Access & Refresh Tokens (JWT) → 🔄 Auto-authentication
+    const accessToken = jwt.sign(
+      { userId: user.id, role: user.role },
+      JWT_SECRET,
+      { expiresIn: "1h" }
+    );
+    const refreshToken = jwt.sign(
+      { userId: user.id, role: user.role },
+      JWT_REFRESH_SECRET,
+      { expiresIn: "7d" }
+    );
 
     // ✅ Store refresh token in HTTP-only cookie
     res.cookie("refreshToken", refreshToken, {
@@ -101,7 +114,11 @@ router.post("/refresh-token", (req, res) => {
       return res.status(403).json({ error: "Invalid refresh token" });
     }
 
-    const newAccessToken = jwt.sign({ userId: decoded.userId, role: decoded.role }, JWT_SECRET, { expiresIn: "1h" });
+    const newAccessToken = jwt.sign(
+      { userId: decoded.userId, role: decoded.role },
+      JWT_SECRET,
+      { expiresIn: "1h" }
+    );
 
     console.log("✅ New Access Token Generated!");
     res.json({ accessToken: newAccessToken });

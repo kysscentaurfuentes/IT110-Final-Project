@@ -2,6 +2,9 @@ import axios from 'axios'
 
 const API_URL = 'http://localhost:3000/users'
 
+// 🔐 [SECURITY] Attach Access Token to API Requests Automatically → 🔗 Ensures secure API calls
+axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('accessToken')}`
+
 // ✅ Fetch Users
 export async function getUsers() {
   try {
@@ -22,9 +25,13 @@ export async function getUsers() {
 export async function updateUserRole(userId, newRole) {
   try {
     const token = localStorage.getItem('accessToken')
-    await axios.put(`${API_URL}/${userId}`, { role: newRole }, {
-      headers: { Authorization: `Bearer ${token}` },
-    })
+    await axios.put(
+      `${API_URL}/${userId}`,
+      { role: newRole },
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      },
+    )
   } catch (error) {
     console.error('❌ Error updating user role:', error.response?.data || error.message)
     throw error

@@ -27,77 +27,77 @@ const router = createRouter({
 // 🔄 Function to Refresh Access Token
 async function refreshAccessToken() {
   try {
-    console.log("🔄 Trying to refresh access token...");
-    const response = await fetch("http://localhost:3000/auth/refresh-token", {
-      method: "POST",
-      credentials: "include", // ✅ Ensures cookies are sent
-    });
+    console.log('🔄 Trying to refresh access token...')
+    const response = await fetch('http://localhost:3000/auth/refresh-token', {
+      method: 'POST',
+      credentials: 'include', // ✅ Ensures cookies are sent
+    })
 
-    if (!response.ok) throw new Error(await response.text());
+    if (!response.ok) throw new Error(await response.text())
 
-    const data = await response.json();
-    localStorage.setItem("accessToken", data.accessToken);
-    console.log("✅ Token refreshed successfully!");
+    const data = await response.json()
+    localStorage.setItem('accessToken', data.accessToken)
+    console.log('✅ Token refreshed successfully!')
 
-    return data.accessToken;
+    return data.accessToken
   } catch (error) {
-    console.error("🔴 Token refresh failed:", error);
-    return null;
+    console.error('🔴 Token refresh failed:', error)
+    return null
   }
 }
 
-// 🔍 Debugging Logs + Authentication Guards
+// 🔐 [SECURITY] Protect Admin Routes - Only allow correct roles & refresh token if expired → 🚨 Blocks unauthorized access
 router.beforeEach(async (to, from, next) => {
-  console.log(`Navigating to: ${to.path}`);
+  console.log(`Navigating to: ${to.path}`)
 
-  let accessToken = localStorage.getItem("accessToken");
-  let userRole = localStorage.getItem("userRole");
+  let accessToken = localStorage.getItem('accessToken')
+  let userRole = localStorage.getItem('userRole')
 
   // ✅ Exclude public routes from authentication check
-  const publicRoutes = ["/home", "/about", "/admin/login"];
+  const publicRoutes = ['/home', '/about', '/admin/login']
   if (publicRoutes.includes(to.path)) {
-    console.log("✅ Public route, proceeding without auth check.");
-    return next(); // ✅ Allow access to public routes
+    console.log('✅ Public route, proceeding without auth check.')
+    return next() // ✅ Allow access to public routes
   }
 
-  // 🔄 Try refreshing token if missing
+  // 🔐 [SECURITY] Auto-refresh token if missing → 🔄 Prevents forced logouts
   if (!accessToken) {
-    console.log("🔴 Access token missing, attempting refresh...");
-    accessToken = await refreshAccessToken();
+    console.log('🔴 Access token missing, attempting refresh...')
+    accessToken = await refreshAccessToken()
 
     if (!accessToken) {
-      console.log("❌ No valid token, redirecting to login");
-      return next("/admin/login");
+      console.log('❌ No valid token, redirecting to login')
+      return next('/admin/login')
     }
   }
 
-  // ✅ Extract user role from token
+  // 🔐 [SECURITY] Extract user role from JWT → ⚠️Prevents tampering with local storage
   try {
-    const tokenPayload = JSON.parse(atob(accessToken.split(".")[1])); // Decode JWT
-    userRole = tokenPayload.role; // Get role from payload
-    localStorage.setItem("userRole", userRole); // Save updated role
+    const tokenPayload = JSON.parse(atob(accessToken.split('.')[1])) // Decode JWT
+    userRole = tokenPayload.role // Get role from payload
+    localStorage.setItem('userRole', userRole) // Save updated role
   } catch (error) {
-    console.error("❌ Error decoding access token:", error);
-    return next("/admin/login");
+    console.error('❌ Error decoding access token:', error)
+    return next('/admin/login')
   }
 
-  // ✅ Role-Based Access Control (RBAC)
-  if (to.meta.requiresAdmin && userRole !== "superadmin") {
-    console.log("🔒 Not an admin, redirecting to /home");
-    return next("/home");
+  // 🔐 [SECURITY] Role-Based Access Control (RBAC) → 🏛️ Controls user permissions
+  if (to.meta.requiresAdmin && userRole !== 'superadmin') {
+    console.log('🔒 Not an admin, redirecting to /home')
+    return next('/home')
   }
 
-  if (to.meta.requiresEmployee && userRole !== "employee") {
-    console.log("🔒 Not an employee, redirecting to /home");
-    return next("/home");
+  if (to.meta.requiresEmployee && userRole !== 'employee') {
+    console.log('🔒 Not an employee, redirecting to /home')
+    return next('/home')
   }
 
-  if (to.meta.requiresCustomer && userRole !== "customer") {
-    console.log("🔒 Not a customer, redirecting to /home");
-    return next("/home");
+  if (to.meta.requiresCustomer && userRole !== 'customer') {
+    console.log('🔒 Not a customer, redirecting to /home')
+    return next('/home')
   }
 
-  return next(); // ✅ Proceed if all checks pass
-});
+  return next() // ✅ Proceed if all checks pass
+})
 
 export default router

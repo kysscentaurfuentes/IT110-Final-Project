@@ -1,6 +1,5 @@
 -- Disable SQL lint
 -- sql-lint disable
-
 -- Create Table
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,

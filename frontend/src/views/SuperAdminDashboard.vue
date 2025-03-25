@@ -31,7 +31,7 @@ const deleteUserAccount = async (userId) => {
   if (!confirm('Are you sure you want to delete this user?')) return
   try {
     await deleteUser(userId)
-    users.value = users.value.filter(user => user.id !== userId) // ✅ Remove from list
+    users.value = users.value.filter((user) => user.id !== userId) // ✅ Remove from list
     toast.success('User deleted successfully!')
   } catch (error) {
     console.error('❌ Error deleting user:', error)
