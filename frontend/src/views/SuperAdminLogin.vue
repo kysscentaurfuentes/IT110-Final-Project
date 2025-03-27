@@ -21,8 +21,8 @@ const login = async () => {
     ) // ✅ Allow cookies for refresh token
 
     const token = response.data.accessToken // ✅ Get Correct Token
-    localStorage.setItem('accessToken', token) // ✅ Store JWT Token
-    localStorage.setItem('userRole', 'superadmin') // ✅ Save Role
+    sessionStorage.setItem('accessToken', token) // ✅ Store JWT Token
+    sessionStorage.setItem('userRole', 'superadmin') // ✅ Save Role
     router.push('/admin/dashboard') // ✅ Redirect after login
   } catch (error) {
     console.error('🔴 Login failed:', error.response?.data || error.message)

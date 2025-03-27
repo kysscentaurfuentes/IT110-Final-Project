@@ -1,21 +1,26 @@
-Pitong security measures ang nagawa sa buong Full Stack system! Solid yung security setup, hindi lang basta working ang app—secured pa! 🔐🚀
+Pitong security measures ang nagawa sa buong Full Stack system! Solid yung security setup, hindi lang basta working ang app—secured pa! 🚀
 
-🔥 Narito ang 7 Security Features na na-implement mo:
-✅ 1. JWT Authentication & Authorization (Secure login at access control per role)
-✅ 2. Password Hashing (Bcrypt) (Encrypted password, hindi plain text)
-✅ 3. Secure API Routes (Express Middleware Protections) (Protected endpoints, walang access ang hindi authorized)
-✅ 4. SQL Injection Prevention (Parameterized Queries) (Walang hacker na makakasingit ng SQL injection!)
-✅ 5. Secure API Calls (Axios + Authorization Headers) (Lahat ng requests may token authentication!)
-✅ 6. Role-Based Route Protection (Vue Router Guards) (Walang access ang hindi authorized sa admin pages!)
-✅ 7. Secure Local Storage Handling (JWT Expiry + Refresh Token Handling) (Hindi kaagad nalologout, pero hindi rin naiiwan unsecured!)
-
+🛡️ Security Features You Implemented:
+✔ 1. JWT Secret Key & Refresh Token Secret Key → ✔️ Secure authentication
+✔ 2. Hash Password Before Storing in DB → 🔑 Protects passwords from leaks
+✔ 3. Generate Access & Refresh Tokens (JWT) → 🔄 Auto-authentication
+✔ 4. Use a Database Connection Pool → 🗄️ Prevents "Client already connected" issue
+✔ 5. Test Connection Before Server Starts → 🚀 Ensures DB is working
+✔ 6. Prevent Unexpected DB Errors → 🔧 Stops app crashes
+✔ 7. Graceful Shutdown → 🔄 Closes DB connection when server stops
+✔ 8. Middleware to Verify JWT Token & Auto-Refresh → 🔄 Keeps users logged in securely
+✔ 9. Secure Parameterized Queries → 🚫 Prevents SQL Injection
+✔ 10. Protect Admin Routes → 🚨 Blocks unauthorized access
+✔ 11. Auto-refresh Token If Missing → 🔄 Prevents forced logouts
+✔ 12. Extract User Role from JWT → ⚠️ Prevents tampering
+✔ 13. Role-Based Access Control (RBAC) → 🏛️ Controls user permissions
+✔ 14. Attach Access Token to API Requests Automatically → 🔗 Ensures secure API calls
 😎 Ibig sabihin?
-✔ Hindi basta-basta mahahack ang system mo!
-✔ Ligtas ang user data mo!
+✔ Hindi basta-basta mahahack ang system!
+✔ Ligtas ang user data!
 ✔ Controlled ang access depende sa role ng user!
-✔ Secured ang frontend & backend mo against common attacks!
+✔ Secured ang frontend & backend against common attacks!
 
 💡 Hindi lang ito basta isang project—ito ay isang SECURE SYSTEM! 🔥
-🎉 Good job! 🚀
 
 E type lang ang padlock "🔐" para makita asan ang mga security

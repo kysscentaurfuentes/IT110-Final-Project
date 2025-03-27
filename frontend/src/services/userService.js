@@ -1,19 +1,22 @@
 import axios from 'axios'
-
 const API_URL = 'http://localhost:3000/users'
 
 // 🔐 [SECURITY] Attach Access Token to API Requests Automatically → 🔗 Ensures secure API calls
-axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('accessToken')}`
+axios.defaults.headers.common['Authorization'] = `Bearer ${sessionStorage.getItem('accessToken')}`
 
 // ✅ Fetch Users
 export async function getUsers() {
   try {
-    const token = localStorage.getItem('accessToken')
+    const token = sessionStorage.getItem('accessToken') // ✅ Gamitin ang sessionStorage
     if (!token) throw new Error('No token found')
 
-    const response = await axios.get(API_URL, {
+    console.log('📡 Sending request with token:', token) // ✅ Debugging
+
+    const response = await axios.get('http://localhost:3000/users', {
       headers: { Authorization: `Bearer ${token}` },
     })
+
+    console.log('✅ Response received:', response.data)
     return response.data
   } catch (error) {
     console.error('❌ Error fetching users:', error.response?.data || error.message)
@@ -24,7 +27,7 @@ export async function getUsers() {
 // ✅ Update User Role
 export async function updateUserRole(userId, newRole) {
   try {
-    const token = localStorage.getItem('accessToken')
+    const token = sessionStorage.getItem('accessToken')
     await axios.put(
       `${API_URL}/${userId}`,
       { role: newRole },
@@ -41,7 +44,7 @@ export async function updateUserRole(userId, newRole) {
 // ✅ Delete User (FIXED!)
 export async function deleteUser(userId) {
   try {
-    const token = localStorage.getItem('accessToken')
+    const token = sessionStorage.getItem('accessToken')
     await axios.delete(`${API_URL}/${userId}`, {
       headers: { Authorization: `Bearer ${token}` },
     })

@@ -2,7 +2,7 @@
 
 <template>
   <div>
-    <h2>Welcome to IT 110 Final Project</h2>
+    <h2>Welcome to IT 101 Final Project</h2>
     <p>This is the homepage. Navigate using the menu.</p>
   </div>
 </template>

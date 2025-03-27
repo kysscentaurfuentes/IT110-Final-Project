@@ -36,7 +36,7 @@ async function refreshAccessToken() {
     if (!response.ok) throw new Error(await response.text())
 
     const data = await response.json()
-    localStorage.setItem('accessToken', data.accessToken)
+    sessionStorage.setItem('accessToken', data.accessToken)
     console.log('✅ Token refreshed successfully!')
 
     return data.accessToken
@@ -50,8 +50,8 @@ async function refreshAccessToken() {
 router.beforeEach(async (to, from, next) => {
   console.log(`Navigating to: ${to.path}`)
 
-  let accessToken = localStorage.getItem('accessToken')
-  let userRole = localStorage.getItem('userRole')
+  let accessToken = sessionStorage.getItem('accessToken')
+  let userRole = sessionStorage.getItem('userRole')
 
   // ✅ Exclude public routes from authentication check
   const publicRoutes = ['/home', '/about', '/admin/login']
@@ -75,7 +75,7 @@ router.beforeEach(async (to, from, next) => {
   try {
     const tokenPayload = JSON.parse(atob(accessToken.split('.')[1])) // Decode JWT
     userRole = tokenPayload.role // Get role from payload
-    localStorage.setItem('userRole', userRole) // Save updated role
+    sessionStorage.setItem('userRole', userRole) // Save updated role
   } catch (error) {
     console.error('❌ Error decoding access token:', error)
     return next('/admin/login')

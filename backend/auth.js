@@ -23,7 +23,7 @@ const generateTokens = (user) => {
   const accessToken = jwt.sign(
     { userId: user.id, role: user.role },
     JWT_SECRET,
-    { expiresIn: "1h" }
+    { expiresIn: "15m" }
   );
   const refreshToken = jwt.sign(
     { userId: user.id, role: user.role },
@@ -50,7 +50,7 @@ router.post("/register", async (req, res) => {
   }
 });
 
-// ✅ LOGIN (Set Access & Refresh Token)
+// ✅ LOGIN (Send Access & Refresh Tokens via JSON)
 router.post("/login", async (req, res) => {
   const { username, password } = req.body;
   console.log("🔍 Login Attempt:", username);
@@ -69,42 +69,24 @@ router.post("/login", async (req, res) => {
     if (!passwordMatch)
       return res.status(401).json({ error: "Invalid credentials" });
 
-    // 🔐 [SECURITY] Generate Access & Refresh Tokens (JWT) → 🔄 Auto-authentication
-    const accessToken = jwt.sign(
-      { userId: user.id, role: user.role },
-      JWT_SECRET,
-      { expiresIn: "1h" }
-    );
-    const refreshToken = jwt.sign(
-      { userId: user.id, role: user.role },
-      JWT_REFRESH_SECRET,
-      { expiresIn: "7d" }
-    );
+    // 🔐 [SECURITY] Generate JWT Tokens
+    const { accessToken, refreshToken } = generateTokens(user);
 
-    // ✅ Store refresh token in HTTP-only cookie
-    res.cookie("refreshToken", refreshToken, {
-      httpOnly: true,
-      secure: false, // 🔥 Change to true only if using HTTPS
-      sameSite: "Lax", // ✅ Fixes CORS issues
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-    });
-
-    console.log("✅ Refresh Token Set in Cookie!");
-    res.json({ accessToken });
+    console.log("✅ Tokens Generated!");
+    res.json({ accessToken, refreshToken }); // ✅ Send tokens to frontend
   } catch (error) {
     res.status(500).json({ error: "Error logging in", details: error.message });
   }
 });
 
-// ✅ REFRESH TOKEN
+// ✅ REFRESH TOKEN (Get token from request body, not cookies)
 router.post("/refresh-token", (req, res) => {
   console.log("🔄 Refresh Token Request Received!");
-  console.log("📡 Cookies received:", req.cookies);
 
-  const refreshToken = req.cookies?.refreshToken;
+  const { refreshToken } = req.body; // ✅ Get refresh token from frontend request
 
   if (!refreshToken) {
-    console.log("❌ No refresh token found in cookies!");
+    console.log("❌ No refresh token provided!");
     return res.status(401).json({ error: "Refresh token required" });
   }
 
@@ -117,7 +99,7 @@ router.post("/refresh-token", (req, res) => {
     const newAccessToken = jwt.sign(
       { userId: decoded.userId, role: decoded.role },
       JWT_SECRET,
-      { expiresIn: "1h" }
+      { expiresIn: "15m" }
     );
 
     console.log("✅ New Access Token Generated!");
