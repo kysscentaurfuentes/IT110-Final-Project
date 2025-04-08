@@ -1,4 +1,15 @@
 const redis = require("../redisClient");
+const emailQueue = require("../utils/queue");
+
+const registerUser = async (req, res) => {
+  // Simulated user registration
+  const user = { email: req.body.email, name: req.body.name };
+
+  // Add email sending job to queue
+  await emailQueue.add("sendEmail", user);
+
+  res.json({ success: true, message: "User registered, email queued." });
+};
 
 async function logout(req, res) {
   const token = req.token;

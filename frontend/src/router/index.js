@@ -5,9 +5,10 @@ import EmployeeDashboard from '@/views/EmployeeDashboard.vue'
 import CustomerDashboard from '@/views/CustomerDashboard.vue'
 import HomeView from '@/views/HomeView.vue'
 import AboutView from '@/views/AboutView.vue'
+import LoginView from '@/views/LoginView.vue'
 
 const routes = [
-  { path: '/', redirect: '/home' }, // ✅ Home ang default page
+  { path: '/', redirect: '/login' }, // ✅ SuperAdminLogin na ang default page
 
   { path: '/admin/dashboard', component: SuperAdminDashboard, meta: { requiresAdmin: true } },
   { path: '/admin/login', component: SuperAdminLogin },
@@ -17,6 +18,7 @@ const routes = [
 
   { path: '/home', component: HomeView },
   { path: '/about', component: AboutView },
+  { path: '/login', component: LoginView },
 ]
 
 const router = createRouter({

@@ -20,12 +20,12 @@ const toggleDarkMode = () => {
     <!-- ✅ Sidebar Navigation (Fixed) -->
     <v-navigation-drawer v-model="drawer" app>
       <v-list>
-        <v-list-item title="Navigation" subtitle="Quick Links"></v-list-item>
+        <v-list-item title="Navigation" subtitle="Quick Links"> </v-list-item>
         <v-divider></v-divider>
         <v-list-item link to="/home"> <v-icon left>mdi-home</v-icon> Home </v-list-item>
         <v-list-item link to="/about"> <v-icon left>mdi-information</v-icon> About </v-list-item>
         <v-list-item link to="/admin/login">
-          <v-icon left>mdi-account-lock</v-icon> Admin Login
+          <v-icon left>mdi-account-lock </v-icon> Admin Login
         </v-list-item>
       </v-list>
     </v-navigation-drawer>

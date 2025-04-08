@@ -14,7 +14,7 @@ Pitong security measures ang nagawa sa buong Full Stack system! Solid yung secur
 ✔ 11. Auto-refresh Token If Missing → 🔄 Prevents forced logouts
 ✔ 12. Extract User Role from JWT → ⚠️ Prevents tampering
 ✔ 13. Role-Based Access Control (RBAC) → 🏛️ Controls user permissions
-✔ 14. Attach Access Token to API Requests Automatically → 🔗 Ensures secure API calls
+✔ 14. Attach Access Token to API Requests Automatically → 🔗 Ensures secure API calls   
 😎 Ibig sabihin?
 ✔ Hindi basta-basta mahahack ang system!
 ✔ Ligtas ang user data!

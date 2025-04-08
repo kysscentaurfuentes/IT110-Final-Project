@@ -1,8 +1,5 @@
 require("dotenv").config();
 const { Pool } = require("pg");
-const { PrismaClient } = require("@prisma/client");
-const prisma = new PrismaClient();
-module.exports = prisma;
 
 // 🔐 [SECURITY] Use a Database Connection Pool → 🗄️ Prevents "Client already connected" issue
 const pool = new Pool({

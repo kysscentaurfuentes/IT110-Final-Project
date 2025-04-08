@@ -6,6 +6,9 @@ const authRoutes = require("./auth");
 const cookieParser = require("cookie-parser");
 const jwt = require("jsonwebtoken");
 const protectedRoutes = require("./routes/protectedRoutes");
+const morgan = require("morgan");
+const logger = require("./utils/logger");
+const errorHandler = require("./middlewares/errorHandler");
 const helmet = require("helmet"); // 🔐 [SECURITY] Protects against XSS, Clickjacking, MIME sniffing, etc.
 const {
   apiLimiter,
@@ -15,6 +18,21 @@ const {
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+// Para sa HTTP request logs
+app.use(morgan("combined"));
+app.use((req, res, next) => {
+  logger.info(`Incoming request: ${req.method} ${req.url}`);
+  next();
+});
+
+// Example error logging
+app.get("/error", (req, res) => {
+  logger.error("Test error log");
+  res.status(500).send("Error occurred");
+});
+
+app.use(errorHandler); // Global error handler middleware
 
 // ✅ Enable CORS for frontend (fixes CORS issues)
 app.use(
@@ -89,6 +107,9 @@ console.log(
     ? registeredRoutes.join("\n")
     : "❌ No routes registered!"
 );
+
+console.log(process.env.DB_URL); // Test kung gumagana
+console.log(process.env.REDIS_HOST); // Dapat mag-print ng 'localhost'
 
 // ✅ Start the server
 app.listen(PORT, () => {
